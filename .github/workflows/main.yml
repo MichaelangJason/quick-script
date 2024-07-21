@@ -18,6 +18,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: List all packages
+        run: yarn list
+
       - name: Install Ray
         run: yarn global add @raycast/api
   
