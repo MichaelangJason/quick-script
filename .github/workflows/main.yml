@@ -30,5 +30,6 @@ jobs:
       run: corepack enable
     - name: Use Yarn
       run: corepack prepare yarn@stable --activate
+    - run: yarn explain peer-requirements
     - run: yarn install
     - run: yarn build
