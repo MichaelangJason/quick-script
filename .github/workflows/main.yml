@@ -18,14 +18,14 @@ jobs:
       - name: Clean Cache
         run: yarn cache clean
 
-      - name: Switch to Production
-        run: export NODE_ENV="production"
+      # - name: Switch to Production
+      #   run: export NODE_ENV="production"
 
-      # - name: Install prod dependencies
-      #   run: yarn global add @raycast/api @raycast/utils execa fs-extra
+      - name: Install prod dependencies
+        run: yarn global add @raycast/api @raycast/utils execa fs-extra
       
-      - name: Install all dep
-        run: yarn install
+      # - name: Install all dep
+      #   run: yarn install
 
       # - name: Check installed packages
       #   run: cat package.json
