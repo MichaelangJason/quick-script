@@ -17,13 +17,16 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --verbose --network-concurrency 1
+
+      - name: Check ray
+        run: yarn bin ray
   
       - name: Build project
         run: yarn build
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: dist
+      # - name: Upload build artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: build
+      #     path: dist
       
