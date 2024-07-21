@@ -15,20 +15,20 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Clean Cache
-        run: yarn cache clean
+      # - name: Clean Cache
+      #   run: yarn cache clean
 
       - name: Install dependencies
-        run: yarn install --network-concurrency 1
+        run: npm install
 
-      - name: Check installed packages
-        run: cat package.json
+      # - name: Check installed packages
+      #   run: cat package.json
       
       - name: Check directory
         run: ls -a
   
       - name: Build project
-        run: yarn build
+        run: npm run build
 
       # - name: Upload build artifacts
       #   uses: actions/upload-artifact@v4
