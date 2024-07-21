@@ -19,7 +19,7 @@ jobs:
         run: yarn cache clean
 
       - name: Switch to Production
-        run: yarn workspaces focus --production
+        run: export NODE_ENV="production"
 
       - name: Install dependencies
         run: yarn global install @raycast/api @raycast/utils execa fs-extra
