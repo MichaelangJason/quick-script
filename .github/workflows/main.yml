@@ -22,13 +22,13 @@ jobs:
       #   run: export NODE_ENV="production"
 
       - name: Install prod dependencies
-        run: yarn global add @raycast/api @raycast/utils execa fs-extra
-      
-      # - name: Install all dep
-      #   run: yarn install
+        run: yarn install
 
-      # - name: Check installed packages
-      #   run: cat package.json
+      - name: Check installed packages
+        run: yarn list
+      
+      - name: Check ray
+        run: yarn ray --help
       
       - name: Check directory
         run: ls -a
