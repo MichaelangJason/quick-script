@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "script-storage",
-  "title": "scr",
-  "description": "test test test test test",
+  "title": "quick-script",
+  "description": "View local scripts and quick launch it",
   "icon": "command-icon.png",
   "author": "michaelangjason",
   "categories": [
@@ -47,8 +47,7 @@
         },
         {
           "title": "Warp",
-          "value": "warp"
-        }
+          "value": "warp"}
       ],
       "default": "Terminal",
       "required": true

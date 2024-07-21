@@ -43,7 +43,7 @@ export default function ScriptsList() {
 
     // console.log("backing up", json);
 
-    writeFile(scriptsListPath, json)
+    await writeFile(scriptsListPath, json)
       .then(() => showToast({
         title: "Backup Successful!",
         style: Toast.Style.Success
@@ -118,7 +118,7 @@ const ScriptList = (props: {
    * Edit existing script
    * @param scriptName
    */
-  const editScript = (newScript: Script, scriptName: string) => {
+  const editScriptJSON = (newScript: Script, scriptName: string) => {
     console.log("editing", scriptName);
     
     const newList = scripts.map((script) => {
@@ -176,8 +176,9 @@ const ScriptList = (props: {
               actions={
                 <ActionPanel>
                   <ActionPanel.Section title="Manage Scripts">
-                    <Action title="Run Script" onAction={() => runScript({ scriptPath: script.filePath})}/>
-                    <Action.Push title="Edit Script" target={<ScriptForm editScript={(newScript: Script) => editScript(newScript, script.name)} scriptConfig={script}/>}/>
+                    <Action title="Run Script" onAction={() => runScript({ scriptPath: script.filePath })}/>
+                    <Action.Push title="Edit Script Content" target={<EditScriptForm scriptPath={script.filePath} reloadScript={loadScriptsFromLocal}/>} />
+                    <Action.Push title="Edit Script Setting" target={<ScriptForm editScriptJSON={(newScript: Script) => editScriptJSON(newScript, script.name)} scriptConfig={script}/>}/>
                     <Action title="Remove Script" onAction={() => removeScript(script.name)} />
                     <Action.Push title="Add New Script" target={<ScriptForm addScript={addScript}/>}/>
                   </ActionPanel.Section>
@@ -195,12 +196,48 @@ const ScriptList = (props: {
   )
 }
 
+const EditScriptForm = (props: {
+  scriptPath: string,
+  reloadScript: () => Promise<void>
+}) => {
+  const { scriptPath, reloadScript } = props;
+  const { pop }= useNavigation();
+  let fileContent = "Error Reading File, please go back";
+  
+  // load file content
+  try {
+    fileContent = readFileSync(scriptPath).toString();
+  } catch (err) {
+    console.log(err);
+
+  }
+
+  const updateFile = async (values: { newContent: string }) => {
+    // console.log("updating", values.newContent);
+    await writeFile(scriptPath, values.newContent);
+    await reloadScript();
+    pop();
+  }
+
+  return (
+    <Form
+      actions={
+        <ActionPanel>
+          <Action.SubmitForm title="Update Script" onSubmit={updateFile} />
+        </ActionPanel>
+      }
+    >
+      <Form.TextArea id="newContent" value={fileContent}></Form.TextArea>
+    </Form>
+  )
+}
+
 const ScriptForm = (props: {
   addScript?: (newScript: Script) => void,
-  editScript?: (newScript: Script) => void,
+  editScriptJSON?: (newScript: Script) => void,
   scriptConfig?: Script;
 }) => {
-  const { addScript, editScript, scriptConfig } = props;
+  const { addScript, editScriptJSON, scriptConfig } = props;
   const { pop } = useNavigation();
   
   // handles form validation
@@ -208,7 +245,7 @@ const ScriptForm = (props: {
     onSubmit(newScript: Script) {
       if (newScript.isJSONFolder) newScript.filePath = resolve(storagePath, newScript.filePath);
       if (addScript) addScript(newScript);
-      if (editScript) editScript(newScript);
+      if (editScriptJSON) editScriptJSON(newScript);
       pop();
       showToast({
         style: Toast.Style.Success,
@@ -239,7 +276,7 @@ const ScriptForm = (props: {
       <Form.TextField title="Script Name" value={scriptConfig?.name ?? ""} placeholder='echo "Hello World!"' {...itemProps.name} />
       <Form.Checkbox title="Prompts" value={scriptConfig?.requiresPrompt ?? false} label="required" {...itemProps.requiresPrompt} />
       <Form.TextField title="Script File Path" value={scriptConfig?.filePath ?? ""} placeholder="/path/to/your/script.sh" {...itemProps.filePath} />
-      <Form.Checkbox title="Same Folder" label="check if the .sh file is in scripts.json folderz" {...itemProps.isJSONFolder} />
+      <Form.Checkbox title="Same Folder" label="check if the .sh file is in scripts.json folder" {...itemProps.isJSONFolder} />
     </Form>
   )
 }
