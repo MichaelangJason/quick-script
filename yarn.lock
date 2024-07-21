@@ -90,9 +90,9 @@
     fastq "^1.6.0"
 
 "@raycast/api@^1.79.0":
-  version "1.79.0"
-  resolved "https://registry.yarnpkg.com/@raycast/api/-/api-1.79.0.tgz#9535c6b3bd8850632c835798333a9997763eef1c"
-  integrity sha512-h6mykNtF7PmsTJ0djtOSnzDnuOSre1CCOC4u3Ts7Ex2Rv3kVFuvNeFFy0fPsLm9HO3QMDRFAvHjPTbCpHA7/dA==
+  version "1.79.1"
+  resolved "https://registry.yarnpkg.com/@raycast/api/-/api-1.79.1.tgz#e9786813ab8bdfbff68fc3ad0f144b0befc66ff2"
+  integrity sha512-q7nF8Mp8nkUuG5G8elNt8a6GyLOSTut94Y35N475w3oyRF6+BTFZBo1lnhjdVcsbSehuvVaiX/tXkmUoj2hhUw==
   dependencies:
     "@types/node" "^20.8.10"
     "@types/react" "^18.3.3"
