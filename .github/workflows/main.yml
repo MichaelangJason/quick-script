@@ -25,6 +25,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
+
+    - name: Set up Yarn
+      run: corepack enable
+    - name: Use Yarn
+      run: corepack prepare yarn@stable --activate
     - run: yarn install
     - run: yarn build
