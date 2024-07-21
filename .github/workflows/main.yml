@@ -18,8 +18,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Install Ray
+        run: yarn global add @raycast/api
+  
       - name: Build project
-        run: yarn ray build -e dist
+        run: yarn build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
