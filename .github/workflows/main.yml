@@ -21,6 +21,9 @@ jobs:
       - name: List all packages
         run: yarn list
 
+      - name: List path
+        run: pwd
+
       - name: Install Ray
         run: yarn global add @raycast/api
   
