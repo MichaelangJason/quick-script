@@ -22,7 +22,7 @@ jobs:
         run: yarn list
 
       - name: List path
-        run: pwd
+        run: ls -a
 
       - name: Install Ray
         run: yarn global add @raycast/api
