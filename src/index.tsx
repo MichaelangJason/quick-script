@@ -1,7 +1,7 @@
-import { 
-  ActionPanel, 
-  List, 
-  Action, 
+import {
+  ActionPanel,
+  List,
+  Action,
   Form,
   showToast,
   Toast,
@@ -24,19 +24,18 @@ const shellPath = resolve("/bin", preferences.shell);
 
 export default function ScriptsList() {
   const [scripts, setScripts] = useState<Script[]>([]);
-  
+
   // backup each time scripts changes, use timeout to avoid initialization sync
   useEffect(() => {
     setTimeout(() => {
       backupScriptsToLocal();
     }, 500);
-  }, [scripts])
-  
+  }, [scripts]);
+
   useEffect(() => {
     // try load from preference
     loadScriptsFromLocal();
   }, []);
-
 
   const backupScriptsToLocal = async () => {
     const json = JSON.stringify({ scripts });
@@ -44,16 +43,18 @@ export default function ScriptsList() {
     // console.log("backing up", json);
 
     await writeFile(scriptsListPath, json)
-      .then(() => showToast({
-        title: "Backup Successful!",
-        style: Toast.Style.Success
-      }))
+      .then(() =>
+        showToast({
+          title: "Backup Successful!",
+          style: Toast.Style.Success,
+        }),
+      )
       .catch((err) => {
-        console.log("No such file exists", err)
+        console.log("No such file exists", err);
         showToast({
           title: "Backup Failed",
-          style: Toast.Style.Failure
-        })
+          style: Toast.Style.Failure,
+        });
       });
   };
 
@@ -67,24 +68,23 @@ export default function ScriptsList() {
           showToast({
             style: Toast.Style.Success,
             title: "Scripts JSON Loaded!",
-          })
-          
+          });
         })
         .catch((err) => {
           console.error(err);
           showToast({
             style: Toast.Style.Failure,
             title: "Scripts JSON error",
-            message: "Either storage path or scripts.json does not exists"
-          })
-        })
+            message: "Either storage path or scripts.json does not exists",
+          });
+        });
     }
   };
-  
+
   return (
-    <ScriptList 
-      scripts={scripts} 
-      setScripts={setScripts} 
+    <ScriptList
+      scripts={scripts}
+      setScripts={setScripts}
       backupScriptsToLocal={backupScriptsToLocal}
       loadScriptsFromLocal={loadScriptsFromLocal}
     />
@@ -92,10 +92,10 @@ export default function ScriptsList() {
 }
 
 const ScriptList = (props: {
-  scripts: Script[],
-  setScripts: React.Dispatch<React.SetStateAction<Script[]>>,
-  backupScriptsToLocal: () => Promise<void>,
-  loadScriptsFromLocal: () => Promise<void>
+  scripts: Script[];
+  setScripts: React.Dispatch<React.SetStateAction<Script[]>>;
+  backupScriptsToLocal: () => Promise<void>;
+  loadScriptsFromLocal: () => Promise<void>;
 }) => {
   const { scripts, setScripts, backupScriptsToLocal, loadScriptsFromLocal } = props;
 
@@ -103,16 +103,16 @@ const ScriptList = (props: {
     // at the beginning, can be ordered in json
     const newList = [newScript, ...scripts];
     setScripts(newList);
-  }
+  };
 
   /**
    * Remove script from list, but keeps local .sh file
-   * @param scriptName 
+   * @param scriptName
    */
   const removeScript = (scriptName: string) => {
     const newList = scripts.filter((script) => script.name !== scriptName);
     setScripts(newList);
-  }
+  };
 
   /**
    * Edit existing script
@@ -120,16 +120,16 @@ const ScriptList = (props: {
    */
   const editScriptJSON = (newScript: Script, scriptName: string) => {
     console.log("editing", scriptName);
-    
+
     const newList = scripts.map((script) => {
       console.log(script);
       return script.name == scriptName ? newScript : script;
-    })
+    });
 
     console.log(newList);
-    
+
     setScripts(newList);
-  }
+  };
 
   const getFileContent = (filePath: string) => {
     let markdown = "# placeholder";
@@ -142,74 +142,75 @@ const ScriptList = (props: {
     }
 
     return markdown;
-  }
-  
-  return (
-    <List 
-        isShowingDetail={true}
-        navigationTitle="Script Storage"
-        searchBarPlaceholder="Search scripts"
-        actions={
-          <ActionPanel>
-            <ActionPanel.Section title="Manage Script">
-              <Action.Push title="Add Script" target={<ScriptForm addScript={addScript}/>}/>
-            </ActionPanel.Section>
-            <ActionPanel.Section title="Extension Setting">
-              <Action title="Open Extension Preferences" onAction={openExtensionPreferences} />
-              <Action title="Backup to Local" onAction={backupScriptsToLocal} />
-              <Action title="Load Backup From Local" onAction={loadScriptsFromLocal} />
-            </ActionPanel.Section>
-          </ActionPanel>
-        }
-      >
-        {
-          scripts.map((script, key) => 
-            <List.Item 
-              title={script.name}
-              key={key}
-              subtitle={basename(script.filePath)}
-              detail={
-                <List.Item.Detail
-                  markdown={getFileContent(script.filePath)}
-                />
-              }
-              actions={
-                <ActionPanel>
-                  <ActionPanel.Section title="Manage Scripts">
-                    <Action title="Run Script" onAction={() => runScript({ scriptPath: script.filePath })}/>
-                    <Action.Push title="Edit Script Content" target={<EditScriptForm scriptPath={script.filePath} reloadScript={loadScriptsFromLocal}/>} />
-                    <Action.Push title="Edit Script Setting" target={<ScriptForm editScriptJSON={(newScript: Script) => editScriptJSON(newScript, script.name)} scriptConfig={script}/>}/>
-                    <Action title="Remove Script" onAction={() => removeScript(script.name)} />
-                    <Action.Push title="Add New Script" target={<ScriptForm addScript={addScript}/>}/>
-                  </ActionPanel.Section>
-                  <ActionPanel.Section title="Settings">
-                    <Action title="Open Extension Preferences" onAction={openExtensionPreferences} />
-                    <Action title="Backup to Local" onAction={backupScriptsToLocal} />
-                    <Action title="Load Backup From Local" onAction={loadScriptsFromLocal} />
-                  </ActionPanel.Section>
-                </ActionPanel>
-              }
-            />
-          )
-        }
-      </List>
-  )
-}
+  };
 
-const EditScriptForm = (props: {
-  scriptPath: string,
-  reloadScript: () => Promise<void>
-}) => {
+  return (
+    <List
+      isShowingDetail={true}
+      navigationTitle="Script Storage"
+      searchBarPlaceholder="Search scripts"
+      actions={
+        <ActionPanel>
+          <ActionPanel.Section title="Manage Script">
+            <Action.Push title="Add Script" target={<ScriptForm addScript={addScript} />} />
+          </ActionPanel.Section>
+          <ActionPanel.Section title="Extension Setting">
+            <Action title="Open Extension Preferences" onAction={openExtensionPreferences} />
+            <Action title="Backup to Local" onAction={backupScriptsToLocal} />
+            <Action title="Load Backup From Local" onAction={loadScriptsFromLocal} />
+          </ActionPanel.Section>
+        </ActionPanel>
+      }
+    >
+      {scripts.map((script, key) => (
+        <List.Item
+          title={script.name}
+          key={key}
+          subtitle={basename(script.filePath)}
+          detail={<List.Item.Detail markdown={getFileContent(script.filePath)} />}
+          actions={
+            <ActionPanel>
+              <ActionPanel.Section title="Manage Scripts">
+                <Action title="Run Script" onAction={() => runScript({ scriptPath: script.filePath })} />
+                <Action.Push
+                  title="Edit Script Content"
+                  target={<EditScriptForm scriptPath={script.filePath} reloadScript={loadScriptsFromLocal} />}
+                />
+                <Action.Push
+                  title="Edit Script Setting"
+                  target={
+                    <ScriptForm
+                      editScriptJSON={(newScript: Script) => editScriptJSON(newScript, script.name)}
+                      scriptConfig={script}
+                    />
+                  }
+                />
+                <Action title="Remove Script" onAction={() => removeScript(script.name)} />
+                <Action.Push title="Add New Script" target={<ScriptForm addScript={addScript} />} />
+              </ActionPanel.Section>
+              <ActionPanel.Section title="Settings">
+                <Action title="Open Extension Preferences" onAction={openExtensionPreferences} />
+                <Action title="Backup to Local" onAction={backupScriptsToLocal} />
+                <Action title="Load Backup From Local" onAction={loadScriptsFromLocal} />
+              </ActionPanel.Section>
+            </ActionPanel>
+          }
+        />
+      ))}
+    </List>
+  );
+};
+
+const EditScriptForm = (props: { scriptPath: string; reloadScript: () => Promise<void> }) => {
   const { scriptPath, reloadScript } = props;
-  const { pop }= useNavigation();
+  const { pop } = useNavigation();
   let fileContent = "Error Reading File, please go back";
-  
+
   // load file content
   try {
     fileContent = readFileSync(scriptPath).toString();
   } catch (err) {
     console.log(err);
-
   }
 
   const updateFile = async (values: { newContent: string }) => {
@@ -217,7 +218,7 @@ const EditScriptForm = (props: {
     await writeFile(scriptPath, values.newContent);
     await reloadScript();
     pop();
-  }
+  };
 
   return (
     <Form
@@ -229,17 +230,17 @@ const EditScriptForm = (props: {
     >
       <Form.TextArea id="newContent" value={fileContent}></Form.TextArea>
     </Form>
-  )
-}
+  );
+};
 
 const ScriptForm = (props: {
-  addScript?: (newScript: Script) => void,
-  editScriptJSON?: (newScript: Script) => void,
+  addScript?: (newScript: Script) => void;
+  editScriptJSON?: (newScript: Script) => void;
   scriptConfig?: Script;
 }) => {
   const { addScript, editScriptJSON, scriptConfig } = props;
   const { pop } = useNavigation();
-  
+
   // handles form validation
   const { handleSubmit, itemProps } = useForm<Script>({
     onSubmit(newScript: Script) {
@@ -250,52 +251,71 @@ const ScriptForm = (props: {
       showToast({
         style: Toast.Style.Success,
         title: "Vuu!",
-        message: `${newScript.name} added`
-      })
+        message: `${newScript.name} added`,
+      });
     },
     initialValues: scriptConfig ?? {},
     validation: {
       name: FormValidation.Required,
-      filePath: (path="") => {
+      filePath: (path = "") => {
         // eslint-disable-next-line no-useless-escape
-        if (!(/^(.+\/)?([^\/]+?)(\.[^.]*$|$)/gm.test(path))) {
+        if (!/^(.+\/)?([^\/]+?)(\.[^.]*$|$)/gm.test(path)) {
           return "Path Format Incorrect";
         }
       },
-    }
-  })
+    },
+  });
 
   return (
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm title={ addScript ? "Create New Script" : "Save Modification" } onSubmit={handleSubmit} />
+          <Action.SubmitForm title={addScript ? "Create New Script" : "Save Modification"} onSubmit={handleSubmit} />
         </ActionPanel>
       }
     >
-      <Form.TextField title="Script Name" value={scriptConfig?.name ?? ""} placeholder='echo "Hello World!"' {...itemProps.name} />
-      <Form.Checkbox title="Prompts" value={scriptConfig?.requiresPrompt ?? false} label="required" {...itemProps.requiresPrompt} />
-      <Form.TextField title="Script File Path" value={scriptConfig?.filePath ?? ""} placeholder="/path/to/your/script.sh" {...itemProps.filePath} />
-      <Form.Checkbox title="Same Folder" label="check if the .sh file is in scripts.json folder" {...itemProps.isJSONFolder} />
+      <Form.TextField
+        title="Script Name"
+        value={scriptConfig?.name ?? ""}
+        placeholder='echo "Hello World!"'
+        {...itemProps.name}
+      />
+      <Form.Checkbox
+        title="Prompts"
+        value={scriptConfig?.requiresPrompt ?? false}
+        label="required"
+        {...itemProps.requiresPrompt}
+      />
+      <Form.TextField
+        title="Script File Path"
+        value={scriptConfig?.filePath ?? ""}
+        placeholder="/path/to/your/script.sh"
+        {...itemProps.filePath}
+      />
+      <Form.Checkbox
+        title="Same Folder"
+        label="check if the .sh file is in scripts.json folder"
+        {...itemProps.isJSONFolder}
+      />
     </Form>
-  )
-}
+  );
+};
 
 const runScript = async (props: {
-  scriptPath: string,
-  args?: string[], // TODO
+  scriptPath: string;
+  args?: string[]; // TODO
 }) => {
   const { scriptPath } = props;
   console.log(scriptPath);
   // try access it first
 
-  if (!await pathExists(scriptPath)) {
+  if (!(await pathExists(scriptPath))) {
     console.log("Incorrect File Path");
     showToast({
       title: "Running Failed",
       style: Toast.Style.Failure,
-      message: "Incorrect filepath or no "
-    })
+      message: "Incorrect filepath or no ",
+    });
     return;
   }
 
@@ -303,30 +323,27 @@ const runScript = async (props: {
 
   console.log("Command: ", command);
 
-  switch(preferences.terminalApp) {
+  switch (preferences.terminalApp) {
     case "warp":
       command = `open -a Warp ${scriptPath}`;
       break;
     case "terminal":
     default:
-      command = `osascript -e 'tell application "Terminal" to do script "eval \\"${shellPath} ${scriptPath}\\";"'`
+      command = `osascript -e 'tell application "Terminal" to do script "eval \\"${shellPath} ${scriptPath}\\";"'`;
   }
 
   console.log("Command: ", command);
-  
+
   // now trying read it and run
   try {
-    await execa({shell: true})`${command}`;
-  
+    await execa({ shell: true })`${command}`;
   } catch (err) {
     console.log("running script failed");
     console.log(err);
     showToast({
       title: "Script Running Failed",
       message: err as string,
-      style: Toast.Style.Failure
-    })
+      style: Toast.Style.Failure,
+    });
   }
-
-  
-}
+};
