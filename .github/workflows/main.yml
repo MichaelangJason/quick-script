@@ -16,10 +16,13 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: yarn install --verbose --network-concurrency 1
+        run: yarn install --network-concurrency 1
 
       - name: Check installed packages
         run: cat package.json
+      
+      - name: Check directory
+        run: ls -a
   
       - name: Build project
         run: yarn build
