@@ -47,7 +47,8 @@
         },
         {
           "title": "Warp",
-          "value": "warp"}
+          "value": "warp"
+        }
       ],
       "default": "Terminal",
       "required": true
