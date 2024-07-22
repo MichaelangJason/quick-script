@@ -25,14 +25,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    # - name: Set up Yarn
-    #   run: corepack enable
-    # - name: Use Yarn
-    #   run: corepack prepare yarn@stable --activate
-    - run: |
-        ls -a
+    - name: Install Dependencies
+      run: |
+        pwd
         yarn install
+    - name: Build Project
+      run: |
+        pwd
         yarn build
-    # - run: yarn explain peer-requirements
-    # - run: yarn install
-    # - run: yarn build
